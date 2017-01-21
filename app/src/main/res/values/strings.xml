@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Movie</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="titlesort">Sort By</string>
+    <string name="orderkey">order</string>
+    <string name="defaultval">popularity</string>
+    <string name="pref_units_label_pop">popular</string>
+    <string name="pref_units_label_rating">rating</string>
+    <string name="pref_units_pop">popularity</string>
+    <string name="pref_units_rating">vote_average</string>
+
+</resources>
