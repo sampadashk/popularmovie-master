@@ -98,7 +98,10 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
 
 
 
-
+    public void onResume() {
+        getLoaderManager().restartLoader(Movie_Loader, null, this);
+        super.onResume();
+    }
 
 
 
@@ -111,7 +114,7 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
 
         //imageArrayAdapter = new ArrayAdapterImage(getActivity(), movies);
         imageArrayAdapter=new ArrayAdapterImage(getActivity(),null,0);
-        gridview = (GridView) rootView.findViewById(R.id.grd);
+        gridview = (GridView) rootView.findViewById(R.id.grd_view);
         gridview.setAdapter(imageArrayAdapter);
         gridview.setVisibility(View.VISIBLE);
       /*  gridview.setOnItemClickListener(new AdapterView.OnItemClickListener()
