@@ -86,7 +86,7 @@ ArrayAdapterImage(Activity context, Cursor c,int flags)
 
        // iv.setImageResource(cursor.getString(MovieFragment.Col_MoviePoster));
 
-        final String MOVIE_BASE_URL = " http://image.tmdb.org/t/p/w185";
+        final String MOVIE_BASE_URL = "http://image.tmdb.org/t/p/w185";
         final String SIZE = "w342";
         final String POSTER_PATH = "poster_path";
         String value;

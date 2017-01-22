@@ -15,12 +15,16 @@ import android.preference.PreferenceManager;
 //import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.example.user.movie.data.MovieContract;
+import com.example.user.movie.SettingsActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,6 +49,7 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
     private static final String[] MOVIE_COLUMNS={
             MovieContract.MovieC._ID,MovieContract.MovieC.Column_Movieid,MovieContract.MovieC.COLUMN_TITLE,MovieContract.MovieC.COLUMN_IMAGE,MovieContract.MovieC.COLUMN_bkgIMAGE,MovieContract.MovieC.COLUMN_OVERVIEW,MovieContract.MovieC.COLUMN_RATING,MovieContract.MovieC.COLUMN_DATE
     };
+    public String mSort;
     static final int Col_ID=0;
     static final int Col_MovieId=1;
     static final int Col_MovieTitle=2;
@@ -67,7 +72,45 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mSort = sharedPrefs.getString(
+                getString(R.string.orderkey),
+                getString(R.string.defaultval));
 
+       // displayMovie();
+
+
+    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu,MenuInflater inflater) {
+        inflater.inflate(R.menu.main, menu);
+
+    }
+
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        int id = menuItem.getItemId();
+        if (id == R.id.menuitem) {
+
+            startActivityForResult(new Intent(getContext(),SettingsActivity.class),0);
+            return true;
+        }
+        return super.onOptionsItemSelected(menuItem);
+
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0) {
+
+
+
+
+
+
+
+            Log.i("MainActivityFragment", "onActivityResult()");
+        }
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
@@ -88,6 +131,9 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
     public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor cursor) {
         Log.d("LOaderfinishcheck","finish working");
         imageArrayAdapter.swapCursor(cursor);
+
+
+        //imageArrayAdapter.changeCursor(cursor);
     }
 
     @Override
@@ -99,8 +145,20 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
 
 
     public void onResume() {
-        getLoaderManager().restartLoader(Movie_Loader, null, this);
         super.onResume();
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sortOrder = sharedPrefs.getString(
+                getString(R.string.orderkey),
+                getString(R.string.defaultval));
+        if(!mSort.equals(sortOrder)) {
+            getLoaderManager().restartLoader(Movie_Loader,null,this);
+            mSort=sortOrder;
+
+            displayMovie();
+
+        }
+
+
     }
 
 
@@ -109,6 +167,7 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
        // movies = new ArrayList<ImageArray>();
 
@@ -116,6 +175,7 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
         imageArrayAdapter=new ArrayAdapterImage(getActivity(),null,0);
         gridview = (GridView) rootView.findViewById(R.id.grd_view);
         gridview.setAdapter(imageArrayAdapter);
+
         gridview.setVisibility(View.VISIBLE);
       /*  gridview.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
@@ -150,8 +210,9 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
     }
 
     public void onStart() {
-        super.onStart();
         displayMovie();
+        super.onStart();
+
     }
 
     private void displayMovie() {
@@ -191,7 +252,7 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
             Vector<ContentValues> cVector=new Vector<>(jsarray.length());
            // moviesend=new ImageArray[n];
 
-            String[] add = new String[n];
+
             String movieName;
             String posterpath;
             String movieTitle;
@@ -205,9 +266,9 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
             //ImageView imageView=(ImageView) view.findViewById(R.id.img_view);
             try {
                 for (int i = 0; i < jsarray.length(); i++) {
-                    String moviePosters;
 
-                    Image img;
+
+
                     JSONObject popmovie = jsarray.getJSONObject(i);
                     movieName = popmovie.getString(TITLE);
                     posterpath = popmovie.getString(poster);
@@ -217,7 +278,7 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
                     plot=popmovie.getString(synopsis);
                     thumbs=popmovie.getString(thumb);
                     Id=popmovie.getInt(movieId);
-                    moviePosters = "https://image.tmdb.org/t/p/w185" + posterpath;
+
 
                     ContentValues values=new ContentValues();
                     values.put(MovieContract.MovieC.Column_Movieid,Id);

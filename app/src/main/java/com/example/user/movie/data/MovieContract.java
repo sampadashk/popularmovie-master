@@ -20,6 +20,7 @@ public class MovieContract {
         public static final String Content_Item_Type=ContentResolver.CURSOR_ITEM_BASE_TYPE+"/"+Content_Authority+"/"+path_movie;
         public static final String tableName="movie";
         public static final String Column_Movieid="MovieID";
+
         public static final String COLUMN_TITLE = "title";
         public static final String COLUMN_IMAGE = "image";
         public static final String COLUMN_bkgIMAGE = "bkgimage";
