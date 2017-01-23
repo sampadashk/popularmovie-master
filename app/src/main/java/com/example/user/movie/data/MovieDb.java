@@ -32,7 +32,16 @@ public class MovieDb extends SQLiteOpenHelper {
     }
     public void onUpgrade(SQLiteDatabase db,int oldVersion,int newVersion)
     {
-        db.execSQL("DROP TABLE IF EXISTS"+MovieContract.MovieC.tableName);
+        db.execSQL("DROP TABLE IF EXISTS "+MovieContract.MovieC.tableName);
         onCreate(db);
+    }
+
+    public void deleteAll(SQLiteDatabase db)
+    {
+        //SQLiteDatabase db = this.getWritableDatabase();
+        // db.delete(TABLE_NAME,null,null);
+        //db.execSQL("delete * from"+ TABLE_NAME);
+        db.execSQL("delete from "+ MovieContract.MovieC.tableName);
+        db.close();
     }
 }

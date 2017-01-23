@@ -155,6 +155,8 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
                 getString(R.string.orderkey),
                 getString(R.string.defaultval));
         if(!mSort.equals(sortOrder)) {
+          //  getLoaderManager().getLoader(Movie_Loader).
+                    getContext().getContentResolver().delete(MovieContract.MovieC.Content_Uri,null,null);
 
             getLoaderManager().restartLoader(Movie_Loader,null,this);
             mSort=sortOrder;
