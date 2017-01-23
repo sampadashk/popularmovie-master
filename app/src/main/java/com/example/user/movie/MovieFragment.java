@@ -123,6 +123,7 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
     {
         Uri MovieUri=MovieContract.MovieC.Content_Uri;
         Log.d("LOadercheck","create working");
+
         return new android.support.v4.content.CursorLoader(getActivity(),MovieUri,MOVIE_COLUMNS,null,null,null);
 
     }
@@ -130,7 +131,10 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
     @Override
     public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor cursor) {
         Log.d("LOaderfinishcheck","finish working");
+        Log.d("cursorlength","lenght is"+cursor.getCount());
+
         imageArrayAdapter.swapCursor(cursor);
+        Log.d("adaptersize","adaptersixe"+imageArrayAdapter.getCount());
 
 
         //imageArrayAdapter.changeCursor(cursor);
@@ -151,6 +155,7 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
                 getString(R.string.orderkey),
                 getString(R.string.defaultval));
         if(!mSort.equals(sortOrder)) {
+
             getLoaderManager().restartLoader(Movie_Loader,null,this);
             mSort=sortOrder;
 

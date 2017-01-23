@@ -32,6 +32,7 @@ public class MovieDb extends SQLiteOpenHelper {
     }
     public void onUpgrade(SQLiteDatabase db,int oldVersion,int newVersion)
     {
-        
+        db.execSQL("DROP TABLE IF EXISTS"+MovieContract.MovieC.tableName);
+        onCreate(db);
     }
 }
