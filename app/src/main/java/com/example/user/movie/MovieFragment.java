@@ -184,7 +184,7 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
         gridview.setAdapter(imageArrayAdapter);
 
         gridview.setVisibility(View.VISIBLE);
-      /*  gridview.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
 
 
@@ -195,12 +195,12 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
                 if(cursor!=null) {
 
                     Bundle bundle = new Bundle();
-                    bundle.putString("title", movieval.title);
+                    bundle.putString("title", cursor.getString(Col_MovieTitle));
                     Log.d("ct", bundle.getString("title"));
-                    bundle.putString("release", movieval.release);
-                    bundle.putString("thumb", movieval.thumb);
-                    bundle.putString("rating", movieval.rating);
-                    bundle.putString("plot", movieval.plot);
+                    bundle.putString("release", cursor.getString(Col_MovieDate));
+                    bundle.putString("thumb", cursor.getString(Col_Moviebkg));
+                    bundle.putString("rating", String.valueOf(cursor.getInt(Col_MovieRating)));
+                    bundle.putString("plot", cursor.getString(Col_MovieOverview));
 
                     Intent intent = new Intent(getActivity(), DetailActivity.class).putExtras(bundle);
                     startActivity(intent);
@@ -211,7 +211,7 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
 
 
         });
-        */
+
 
         return rootView;
     }
