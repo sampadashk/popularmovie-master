@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:name="com.example.user.movie.MovieFragment"
 
-    android:id="@+id/container"
-    tools:context="com.example.user.movie.MainActivity">
 
-</FrameLayout>
+    android:id="@+id/fragment_movie"
+    tools:layout="@layout/fragment_main"
+    tools:context="com.example.user.movie.MovieFragment">
+
+</fragment>
