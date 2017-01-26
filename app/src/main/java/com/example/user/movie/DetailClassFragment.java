@@ -145,39 +145,44 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
     @Override
 
     public void onLoadFinished(Loader loader, Cursor data) {
-        if(data!=null&&data.moveToFirst())
-        {
-            String titlet=data.getString(Col_MovieTitle);
-           // int movieId=data.getInt(Col_MovieId);
-           // TrailerClass Tc=new TrailerClass();
+        if (data != null && data.moveToFirst()) {
+            String titlet = data.getString(Col_MovieTitle);
+            // int movieId=data.getInt(Col_MovieId);
+            // TrailerClass Tc=new TrailerClass();
 
-           // Tc.execute(Integer.toString(movieId));
-           // Log.d("selected","mov is"+movieId);
+            // Tc.execute(Integer.toString(movieId));
+            // Log.d("selected","mov is"+movieId);
 
             android.app.ActionBar actionBar = getActivity().getActionBar();
             if (actionBar != null) {
                 actionBar.setDisplayHomeAsUpEnabled(true);
                 actionBar.setTitle(titlet);
             }
-            String bkgurl=data.getString(Col_Moviebkg);
-            String url = "http://image.tmdb.org/t/p/w342"+bkgurl;
+            String bkgurl = data.getString(Col_Moviebkg);
+            String url = "http://image.tmdb.org/t/p/w342" + bkgurl;
             Picasso.with(getContext()).setLoggingEnabled(true);
             Picasso.with(getContext()).load(url).into(ivw);
-           tv1.setText(data.getString(Col_MovieRating));
+            tv1.setText(data.getString(Col_MovieRating));
             tv2.setText(data.getString(Col_MovieDate));
             tv3.setText(data.getString(Col_MovieOverview));
             String yt_url = "http://img.youtube.com/vi/" + key + "/0.jpg";
-            Log.d("checktrailerurl",yt_url);
+            Log.d("checktrailerurl", yt_url);
             Picasso.with(getContext()).setLoggingEnabled(true);
             Picasso.with(getContext()).load(yt_url).into(trailerImage);
 
 
+            trailerImage.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
 
-            if (mShareActionProvider != null) {
-                mShareActionProvider.setShareIntent(createShareMovieIntent());
-            }
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse("http://www.youtube.com/watch?v=" + key));
+                    startActivity(intent);
+                }
+
+            });
+
+
         }
-
     }
 
     @Override
