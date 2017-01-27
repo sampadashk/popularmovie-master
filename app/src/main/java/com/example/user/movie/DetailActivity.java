@@ -31,6 +31,7 @@ public class DetailActivity extends AppCompatActivity {
 
             Bundle arguments = new Bundle();
             arguments.putParcelable(DetailClassFragment.DETAIL_URI, getIntent().getData());
+            arguments.putInt(DetailClassFragment.Tag_movid,getIntent().getIntExtra(DetailClassFragment.Tag_movid,0));
 
             DetailClassFragment fragment = new DetailClassFragment();
             fragment.setArguments(arguments);
