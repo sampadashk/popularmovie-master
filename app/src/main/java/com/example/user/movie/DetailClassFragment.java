@@ -288,7 +288,7 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
 
                     mTrailer = trailers.get(0);
                 key= mTrailer.getKey();
-                Log.d("keyvalue",key);
+               // Log.d("keyvalue",key);
 
 
                 }
