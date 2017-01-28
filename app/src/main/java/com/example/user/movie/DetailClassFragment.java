@@ -1,6 +1,7 @@
 package com.example.user.movie;
 
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.user.movie.data.MovieContract;
@@ -53,11 +55,15 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
     ImageView trailerImage;
     private Trailer mTrailer;
     int keymovieId;
+
     String key;
     private ShareActionProvider mShareActionProvider;
 
     private static final String[] Detail_COLUMNS={
             MovieContract.MovieC._ID,MovieContract.MovieC.Column_Movieid,MovieContract.MovieC.COLUMN_TITLE,MovieContract.MovieC.COLUMN_IMAGE,MovieContract.MovieC.COLUMN_bkgIMAGE,MovieContract.MovieC.COLUMN_OVERVIEW,MovieContract.MovieC.COLUMN_RATING,MovieContract.MovieC.COLUMN_DATE
+    };
+    private static final String[] Trailer_COLUMNS={
+            MovieContract.TrailerC._ID,MovieContract.TrailerC.Column_Movieid,MovieContract.TrailerC.Column_MovieKey
     };
     //public String mSort;
     static final int Col_ID=0;
@@ -69,7 +75,13 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
     static final int Col_MovieRating=6;
     static final int Col_MovieDate=7;
     String tag_Movieid="TAGMovieID";
-    int Detail_Loader=0;
+    static final int Col_TRAID=0;
+    static final int Col_TRAMID=1;
+    static final int Col_TRAIMKEY=2;
+
+   final int Detail_Loader=0;
+    final int Trailer_Loader=1;
+
 
 
     @Override
@@ -81,9 +93,11 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
             selectedMovieId = MovieContract.MovieC.getIdFromUri(mUri);
             keymovieId = arguments.getInt(DetailClassFragment.Tag_movid);
             Log.d("movid", "id is" + keymovieId);
+
             TrailerClass Tc = new TrailerClass();
             String s = Integer.toString(keymovieId);
             Tc.execute(s);
+            getLoaderManager().initLoader(Trailer_Loader,null,this);
 
 
         }
@@ -91,6 +105,7 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
     public void onActivityCreated(Bundle args)
     {
         getLoaderManager().initLoader(Detail_Loader,null,this);
+
         super.onActivityCreated(args);
     }
     @Override
@@ -102,7 +117,9 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
 
 
         View v=inflater.inflate(R.layout.activity_detailfragment,container,false);
+
         ivw=(ImageView) v.findViewById(R.id.poster_image_view);
+
         ivw.setVisibility(View.VISIBLE);
 
         tv1=(TextView)v.findViewById(R.id.rating_text_view);
@@ -129,57 +146,99 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
-        if(mUri!=null)
-        {
+
+       switch(id)
+       {
+           case 0:
+               if(mUri!=null)
+               {
 
 
 
-            String[] selectionArgs;
-            String selection = MovieContract.MovieC._ID + "=?";
-            selectionArgs = new String[] { String.valueOf(ContentUris.parseId(mUri)) };
-            Log.d("checkLoadervalue","val is"+selectionArgs);
-            return new CursorLoader(getActivity(),MovieContract.MovieC.Content_Uri,Detail_COLUMNS,selection,selectionArgs,null);
-        }
+                   String[] selectionArgs;
+                   String selection = MovieContract.MovieC._ID + "=?";
+                   selectionArgs = new String[] { String.valueOf(ContentUris.parseId(mUri)) };
+                   Log.d("checkLoadervalue","val is"+selectionArgs);
+                   return new CursorLoader(getActivity(),MovieContract.MovieC.Content_Uri,Detail_COLUMNS,selection,selectionArgs,null);
+
+               }
+
+           case 1:
+               String selectionk=MovieContract.TrailerC.Column_Movieid+ "=?";
+               String[] selectionArgs=new String[]{String.valueOf(keymovieId)};
+               return new CursorLoader(getActivity(),MovieContract.TrailerC.Content_Uri,Trailer_COLUMNS,selectionk,selectionArgs,null);
+
+
+       }
         return null;
+
     }
     @Override
 
     public void onLoadFinished(Loader loader, Cursor data) {
-        if (data != null && data.moveToFirst()) {
-            String titlet = data.getString(Col_MovieTitle);
-            // int movieId=data.getInt(Col_MovieId);
-            // TrailerClass Tc=new TrailerClass();
 
-            // Tc.execute(Integer.toString(movieId));
-            // Log.d("selected","mov is"+movieId);
+        int loaderId = loader.getId();
+        switch(loaderId)
+        {
+            case Detail_Loader:  {
 
-            android.app.ActionBar actionBar = getActivity().getActionBar();
-            if (actionBar != null) {
-                actionBar.setDisplayHomeAsUpEnabled(true);
-                actionBar.setTitle(titlet);
-            }
-            String bkgurl = data.getString(Col_Moviebkg);
-            String url = "http://image.tmdb.org/t/p/w342" + bkgurl;
-            Picasso.with(getContext()).setLoggingEnabled(true);
-            Picasso.with(getContext()).load(url).into(ivw);
-            tv1.setText(data.getString(Col_MovieRating));
-            tv2.setText(data.getString(Col_MovieDate));
-            tv3.setText(data.getString(Col_MovieOverview));
-            String yt_url = "http://img.youtube.com/vi/" + key + "/0.jpg";
-            Log.d("checktrailerurl", yt_url);
-            Picasso.with(getContext()).setLoggingEnabled(true);
-            Picasso.with(getContext()).load(yt_url).into(trailerImage);
+                if (data != null && data.moveToFirst()) {
+                    String titlet = data.getString(Col_MovieTitle);
+                    // int movieId=data.getInt(Col_MovieId);
+                    // TrailerClass Tc=new TrailerClass();
+
+                    // Tc.execute(Integer.toString(movieId));
+                    // Log.d("selected","mov is"+movieId);
+
+                    android.app.ActionBar actionBar = getActivity().getActionBar();
+                    if (actionBar != null) {
+                        actionBar.setDisplayHomeAsUpEnabled(true);
+                        actionBar.setTitle(titlet);
+                    }
+                    String bkgurl = data.getString(Col_Moviebkg);
+                    String url = "http://image.tmdb.org/t/p/w342" + bkgurl;
+                    Picasso.with(getContext()).setLoggingEnabled(true);
+                    Picasso.with(getContext()).load(url).into(ivw);
+                    tv1.setText(data.getString(Col_MovieRating));
+                    tv2.setText(data.getString(Col_MovieDate));
+                    tv3.setText(data.getString(Col_MovieOverview));
 
 
-            trailerImage.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
 
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse("http://www.youtube.com/watch?v=" + key));
-                    startActivity(intent);
+
                 }
+                return;
 
-            });
+
+            }
+            case Trailer_Loader: {
+                if (data.getCount() > 0) {
+                    data.moveToFirst();
+                    key = data.getString(Col_TRAIMKEY);
+                    String yt_url = "http://img.youtube.com/vi/" + key + "/0.jpg";
+                    Log.d("checktrailerurl", yt_url);
+                    Picasso.with(getContext()).setLoggingEnabled(true);
+                    Picasso.with(getContext()).load(yt_url).into(trailerImage);
+
+
+                    trailerImage.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse("http://www.youtube.com/watch?v=" + key));
+                            startActivity(intent);
+                        }
+
+                    });
+                }
+                return;
+
+
+            }
+            default:
+            {
+                Log.d("lOADER ERROR","not able to display cursor for any loaders");
+            }
 
 
         }
@@ -260,23 +319,41 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
 
             List<Trailer> results = new ArrayList<>();
 
+
             for(int i = 0; i < trailerArray.length(); i++) {
                 JSONObject trailer = trailerArray.getJSONObject(i);
                 // Only show Trailers which are on Youtube
                 if (trailer.getString("site").contentEquals("YouTube")) {
                     Trailer trailerModel = new Trailer(trailer);
                     results.add(trailerModel);
-                    Log.d("CheckJson",trailerModel.getName());
-                }
-            }
-            mTrailer = results.get(0);
-            key= mTrailer.getKey();
-            Log.d("Tag_keyv",key);
+                    String selection = MovieContract.TrailerC.Column_Movieid + "=?";
+                    String[] selectionArgs = new String[]{String.valueOf(keymovieId)};
+                    Cursor cur = null;
+                    cur = getContext().getContentResolver().query(MovieContract.TrailerC.Content_Uri, Trailer_COLUMNS, selection, selectionArgs, null);
+                    if (cur.moveToFirst()) {
 
+                    } else {
+
+                        ContentValues cv = new ContentValues();
+                        cv.put(MovieContract.TrailerC.Column_Movieid, keymovieId);
+                        cv.put(MovieContract.TrailerC.Column_MovieKey, trailerModel.getKey());
+                        Uri ur;
+
+                        ur = getContext().getContentResolver().insert(MovieContract.TrailerC.Content_Uri, cv);
+                        Log.d("CheckJson", trailerModel.getName());
+                        Log.d("inserted ur", "uri is" + ur);
+                    }
+
+                }
+
+
+
+            }
             return results;
         }
-        @Override
+       /* @Override
         protected void onPostExecute(List<Trailer> trailers) {
+
             Log.d("inFunc","onpOST");
             if (trailers != null) {
                 if (trailers.size() > 0) {
@@ -287,13 +364,15 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
                     }
 
                     mTrailer = trailers.get(0);
+                Log.d("checkt","trail"+mTrailer);
                 key= mTrailer.getKey();
-               // Log.d("keyvalue",key);
+                Log.d("keyvalue",key);
 
 
                 }
 
             }
+            */
         }
 
 

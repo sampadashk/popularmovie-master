@@ -37,19 +37,19 @@ public class MovieContract {
         }
 
     }
-    /*public static class TrailerC implements BaseColumns
-    {
-        public static final String tableName="trailer";
-        public static  Uri Content_Uri=Base_Uri.buildUpon().appendPath(path_trailer).build();
-        public static final String Content_Type= ContentResolver.CURSOR_DIR_BASE_TYPE+"/"+Content_Authority+"/"+path_trailer;
-        public static final String Content_Item_Type=ContentResolver.CURSOR_ITEM_BASE_TYPE+"/"+Content_Authority+"/"+path_trailer;
-        public static final String Column_Movieid="MovieID";
-        public static final String Column_MovieKey="keym";
-        public static Uri BuildUriFromId(long id)
-        {
-            return ContentUris.withAppendedId(Content_Uri,id);
+    public static class TrailerC implements BaseColumns {
+        public static final String tableName = "trailer";
+        public static Uri Content_Uri = Base_Uri.buildUpon().appendPath(path_trailer).build();
+        public static final String Content_Type = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + Content_Authority + "/" + path_trailer;
+        public static final String Content_Item_Type = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + Content_Authority + "/" + path_trailer;
+        public static final String Column_Movieid = "MovieID";
+        public static final String Column_MovieKey = "keym";
+
+        public static Uri BuildUriFromId(long id) {
+            return ContentUris.withAppendedId(Content_Uri, id);
         }
-        */
+    }
+
 
 
 }
