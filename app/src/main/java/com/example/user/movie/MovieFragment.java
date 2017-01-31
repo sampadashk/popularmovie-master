@@ -1,13 +1,9 @@
 package com.example.user.movie;
 
-import android.app.LoaderManager;
 import android.content.ContentValues;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,7 +21,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.example.user.movie.data.MovieContract;
-import com.example.user.movie.SettingsActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +32,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -46,7 +40,8 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
 {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private ArrayAdapterImage imageArrayAdapter;
+    private MovieAdapter imageArrayAdapter;
+
     private static final int Movie_Loader=0;
     private static final String[] MOVIE_COLUMNS={
             MovieContract.MovieC._ID,MovieContract.MovieC.Column_Movieid,MovieContract.MovieC.COLUMN_TITLE,MovieContract.MovieC.COLUMN_IMAGE,MovieContract.MovieC.COLUMN_bkgIMAGE,MovieContract.MovieC.COLUMN_OVERVIEW,MovieContract.MovieC.COLUMN_RATING,MovieContract.MovieC.COLUMN_DATE
@@ -71,6 +66,8 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
     //ImageArray[] moviesend;
     private List<ImageArray> movies;
     GridView gridview;
+    int mPosition=GridView.INVALID_POSITION;
+    private static final String SELECTED_KEY = "selected_position";
 
 
     public MovieFragment() {
@@ -143,6 +140,10 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
 
         imageArrayAdapter.swapCursor(cursor);
         Log.d("adaptersize","adaptersixe"+imageArrayAdapter.getCount());
+        if(mPosition!=GridView.INVALID_POSITION)
+        {
+            gridview.smoothScrollToPosition(mPosition);
+        }
 
 
         //imageArrayAdapter.changeCursor(cursor);
@@ -186,8 +187,8 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
        // movies = new ArrayList<ImageArray>();
 
-        //imageArrayAdapter = new ArrayAdapterImage(getActivity(), movies);
-        imageArrayAdapter=new ArrayAdapterImage(getActivity(),null,0);
+        //imageArrayAdapter = new MovieAdapter(getActivity(), movies);
+        imageArrayAdapter=new MovieAdapter(getActivity(),null,0);
         gridview = (GridView) rootView.findViewById(R.id.grd_view);
         gridview.setAdapter(imageArrayAdapter);
 
@@ -236,12 +237,18 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
                     startActivity(intent);
                     */
                 }
+                mPosition=i;
+
 
             }
 
 
 
         });
+        if(savedInstanceState!=null&&savedInstanceState.containsKey(SELECTED_KEY))
+        {
+            mPosition=savedInstanceState.getInt(SELECTED_KEY);
+        }
 
 
         return rootView;
@@ -251,6 +258,15 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
         displayMovie();
         super.onStart();
 
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outstate)
+    {
+        if(mPosition!=GridView.INVALID_POSITION)
+        {
+            outstate.putInt(SELECTED_KEY,mPosition);
+        }
+        super.onSaveInstanceState(outstate);
     }
 
 

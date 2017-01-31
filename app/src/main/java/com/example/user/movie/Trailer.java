@@ -16,6 +16,11 @@ public class Trailer {
 
     public Trailer() {
 
+
+    }
+    Trailer(String key)
+    {
+        this.key=key;
     }
 
     public Trailer(JSONObject trailer) throws JSONException {

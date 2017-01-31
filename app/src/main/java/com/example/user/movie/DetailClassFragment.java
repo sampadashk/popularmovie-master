@@ -13,6 +13,9 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.os.AsyncTaskCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +26,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.user.movie.data.MovieContract;
+import com.example.user.movie.data.TrailerAdapter;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -50,10 +54,11 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
     static final String Tag_movid="movieid";
     private Uri mUri;
     ImageView ivw;
-    TextView tv1,tv2,tv3;
+    TextView tv0,tv1,tv2,tv3;
     String selectedMovieId;
     ImageView trailerImage;
     private Trailer mTrailer;
+    private ArrayList<Trailer> TrailerList=new ArrayList<Trailer>();
     int keymovieId;
 
     String key;
@@ -81,6 +86,9 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
 
    final int Detail_Loader=0;
     final int Trailer_Loader=1;
+    private RecyclerView mRecyclerView;
+    private TrailerAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
 
 
@@ -93,6 +101,7 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
             selectedMovieId = MovieContract.MovieC.getIdFromUri(mUri);
             keymovieId = arguments.getInt(DetailClassFragment.Tag_movid);
             Log.d("movid", "id is" + keymovieId);
+            TrailerList.clear();
 
             TrailerClass Tc = new TrailerClass();
             String s = Integer.toString(keymovieId);
@@ -121,13 +130,21 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
         ivw=(ImageView) v.findViewById(R.id.poster_image_view);
 
         ivw.setVisibility(View.VISIBLE);
+        tv0=(TextView) v.findViewById(R.id.moviedetail_title);
 
         tv1=(TextView)v.findViewById(R.id.rating_text_view);
 
         tv2=(TextView)v.findViewById(R.id.date_text_view);
 
         tv3=(TextView)v.findViewById(R.id.overview_text_view);
-        trailerImage=(ImageView)v.findViewById(R.id.imgTrailer);
+       // trailerImage=(ImageView)v.findViewById(R.id.imgTrailer);
+        mRecyclerView = (RecyclerView) v.findViewById(R.id.trailer_recycleview);
+        mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mAdapter = new TrailerAdapter(TrailerList, getContext());
+        mRecyclerView.setAdapter(mAdapter);
         return v;
 
 
@@ -199,6 +216,7 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
                     String url = "http://image.tmdb.org/t/p/w342" + bkgurl;
                     Picasso.with(getContext()).setLoggingEnabled(true);
                     Picasso.with(getContext()).load(url).into(ivw);
+                    tv0.setText(data.getString(Col_MovieTitle));
                     tv1.setText(data.getString(Col_MovieRating));
                     tv2.setText(data.getString(Col_MovieDate));
                     tv3.setText(data.getString(Col_MovieOverview));
@@ -212,7 +230,24 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
 
             }
             case Trailer_Loader: {
-                if (data.getCount() > 0) {
+
+                int count=data.getCount();
+                data.moveToFirst();
+                while(count>0)
+                {
+                    String mkey=data.getString(Col_TRAIMKEY);
+                    Trailer trailer=new Trailer(mkey);
+                    TrailerList.add(trailer);
+                    data.moveToNext();
+                    count-=1;
+                }
+
+
+
+                Log.d("LOG_TLIST","TRAILER"+TrailerList);
+
+
+              /*  if (data.getCount() > 0) {
                     data.moveToFirst();
                     key = data.getString(Col_TRAIMKEY);
                     String yt_url = "http://img.youtube.com/vi/" + key + "/0.jpg";
@@ -230,7 +265,7 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
                         }
 
                     });
-                }
+                }*/
                 return;
 
 
@@ -318,13 +353,17 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
             JSONArray trailerArray = trailerJson.getJSONArray("results");
 
             List<Trailer> results = new ArrayList<>();
+            final String KEY = "key";
+            Trailer trailerModel;
 
 
             for(int i = 0; i < trailerArray.length(); i++) {
                 JSONObject trailer = trailerArray.getJSONObject(i);
                 // Only show Trailers which are on Youtube
                 if (trailer.getString("site").contentEquals("YouTube")) {
-                    Trailer trailerModel = new Trailer(trailer);
+                    String trailerkey=trailer.getString(KEY);
+                    Log.d("keycheck",trailerkey);
+                    trailerModel = new Trailer();
                     results.add(trailerModel);
                     String selection = MovieContract.TrailerC.Column_Movieid + "=?";
                     String[] selectionArgs = new String[]{String.valueOf(keymovieId)};
@@ -344,11 +383,14 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
                         Log.d("inserted ur", "uri is" + ur);
                     }
 
+
                 }
 
 
 
+
             }
+            Log.d("charraylist","lis"+results);
             return results;
         }
        /* @Override

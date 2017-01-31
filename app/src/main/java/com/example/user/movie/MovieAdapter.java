@@ -22,29 +22,41 @@ import java.util.List;
  * Created by user on 10/7/2016.
  */
 //
-// public class ArrayAdapterImage extends ArrayAdapter<ImageArray> {
-public class ArrayAdapterImage extends CursorAdapter {
+// public class MovieAdapter extends ArrayAdapter<ImageArray> {
+public class MovieAdapter extends CursorAdapter {
 
     Context context;
 
 /*
-ArrayAdapterImage(Activity context, List<ImageArray> imgarr)
+MovieAdapter(Activity context, List<ImageArray> imgarr)
 {
     super(context,0,imgarr);
     this.context=context;
 
 }
 */
-ArrayAdapterImage(Activity context, Cursor c,int flags)
+MovieAdapter(Activity context, Cursor c, int flags)
 {
     super(context,c,flags);
     this.context=context;
 
 }
+    public static class ViewHolder
+    {
+        ImageView imageView;
+        public ViewHolder(View v)
+        {
+            imageView=(ImageView)v.findViewById(R.id.img_view);
+
+        }
+    }
+
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
         View view=LayoutInflater.from(context).inflate(R.layout.movieimage,viewGroup,false);
+        ViewHolder viewHolder=new ViewHolder(view);
+        view.setTag(viewHolder);
         return view;
     }
 
@@ -82,7 +94,8 @@ ArrayAdapterImage(Activity context, Cursor c,int flags)
     @Override
     public void bindView(View view,Context context,Cursor cursor)
     {
-        ImageView iv=(ImageView)view.findViewById(R.id.img_view);
+        ViewHolder viewHolder= (ViewHolder) view.getTag();
+       // ImageView iv=(ImageView)view.findViewById(R.id.img_view);
 
        // iv.setImageResource(cursor.getString(MovieFragment.Col_MoviePoster));
 
@@ -96,7 +109,7 @@ ArrayAdapterImage(Activity context, Cursor c,int flags)
         String ImageDisplay=MOVIE_BASE_URL+cursor.getString(MovieFragment.Col_MoviePoster);
         Log.d("ImgCheck1",ImageDisplay);
         Picasso.with(context).setLoggingEnabled(true);
-        Picasso.with(context).load(ImageDisplay).into(iv);
+        Picasso.with(context).load(ImageDisplay).into(viewHolder.imageView);
 
     }
 
