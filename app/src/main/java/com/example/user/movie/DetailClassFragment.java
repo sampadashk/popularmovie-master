@@ -12,6 +12,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.os.AsyncTaskCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -83,6 +84,7 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
     static final int Col_TRAID=0;
     static final int Col_TRAMID=1;
     static final int Col_TRAIMKEY=2;
+    public static final String TAG = DetailClassFragment.class.getSimpleName();
 
    final int Detail_Loader=0;
     final int Trailer_Loader=1;
@@ -101,19 +103,23 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
             selectedMovieId = MovieContract.MovieC.getIdFromUri(mUri);
             keymovieId = arguments.getInt(DetailClassFragment.Tag_movid);
             Log.d("movid", "id is" + keymovieId);
-            TrailerList.clear();
 
-            TrailerClass Tc = new TrailerClass();
-            String s = Integer.toString(keymovieId);
-            Tc.execute(s);
-            getLoaderManager().initLoader(Trailer_Loader,null,this);
+
+
 
 
         }
     }
     public void onActivityCreated(Bundle args)
     {
-        getLoaderManager().initLoader(Detail_Loader,null,this);
+        if(keymovieId!=0) {
+            TrailerClass Tc = new TrailerClass();
+            String s = Integer.toString(keymovieId);
+            Tc.execute(s);
+            getLoaderManager().initLoader(Trailer_Loader, null, this);
+
+            getLoaderManager().initLoader(Detail_Loader, null, this);
+        }
 
         super.onActivityCreated(args);
     }
@@ -126,6 +132,9 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
 
 
         View v=inflater.inflate(R.layout.activity_detailfragment,container,false);
+        NestedScrollView nestedScrollView=(NestedScrollView) v.findViewById(R.id.detailfraglay);
+
+
 
         ivw=(ImageView) v.findViewById(R.id.poster_image_view);
 
@@ -143,8 +152,16 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mAdapter = new TrailerAdapter(TrailerList, getContext());
-        mRecyclerView.setAdapter(mAdapter);
+        if(keymovieId!=0)
+        {
+            nestedScrollView.setVisibility(View.VISIBLE);
+
+        }
+        else
+        {
+            nestedScrollView.setVisibility(View.INVISIBLE);
+        }
+
         return v;
 
 
@@ -232,6 +249,8 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
             case Trailer_Loader: {
 
                 int count=data.getCount();
+                Log.d("countcal","tots"+count);
+                TrailerList.clear();
                 data.moveToFirst();
                 while(count>0)
                 {
@@ -245,6 +264,19 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
 
 
                 Log.d("LOG_TLIST","TRAILER"+TrailerList);
+                mAdapter = new TrailerAdapter(TrailerList, getContext());
+                mRecyclerView.setAdapter(mAdapter);
+                mAdapter.setOnItemClickListener(new TrailerAdapter.ClickListener() {
+                    @Override
+                    public void onItemClick(int position, View v) {
+                        Trailer item = TrailerList.get(position);
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + item.getKey()));
+                        startActivity(intent);
+                    }
+                });
+                {
+
+                }
 
 
               /*  if (data.getCount() > 0) {
@@ -367,11 +399,13 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
                     results.add(trailerModel);
                     String selection = MovieContract.TrailerC.Column_Movieid + "=?";
                     String[] selectionArgs = new String[]{String.valueOf(keymovieId)};
-                    Cursor cur = null;
-                    cur = getContext().getContentResolver().query(MovieContract.TrailerC.Content_Uri, Trailer_COLUMNS, selection, selectionArgs, null);
-                    if (cur.moveToFirst()) {
+                   // Cursor cur = null;
+                   // cur = getContext().getContentResolver().query(MovieContract.TrailerC.Content_Uri, Trailer_COLUMNS, selection, selectionArgs, null);
+                   // if (cur.moveToFirst()) {
+                       // break;
 
-                    } else {
+
+                   // } else {
 
                         ContentValues cv = new ContentValues();
                         cv.put(MovieContract.TrailerC.Column_Movieid, keymovieId);
@@ -381,7 +415,7 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
                         ur = getContext().getContentResolver().insert(MovieContract.TrailerC.Content_Uri, cv);
                         Log.d("CheckJson", trailerModel.getName());
                         Log.d("inserted ur", "uri is" + ur);
-                    }
+                   // }
 
 
                 }

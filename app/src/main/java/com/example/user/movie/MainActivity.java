@@ -14,7 +14,7 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity implements MovieFragment.Callback {
 
     private boolean mTwoPane;
-    private static final String DETAILFRAGMENT_TAG = "DFTAG";
+  //  private static final String DETAILFRAGMENT_TAG = "DFTAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.movie_detail_container, new DetailClassFragment(),
-                                DETAILFRAGMENT_TAG)
+                                DetailClassFragment.TAG)
                         .commit();
             }
         } else {
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
             fragment.setArguments(args);
 
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.movie_detail_container, fragment, DETAILFRAGMENT_TAG)
+                    .replace(R.id.movie_detail_container, fragment, DetailClassFragment.TAG)
                     .commit();
         } else {
             Intent intent = new Intent(this, DetailActivity.class)
