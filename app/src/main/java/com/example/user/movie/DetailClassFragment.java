@@ -363,7 +363,7 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
                 if (trailer.getString("site").contentEquals("YouTube")) {
                     String trailerkey=trailer.getString(KEY);
                     Log.d("keycheck",trailerkey);
-                    trailerModel = new Trailer();
+                    trailerModel = new Trailer(trailer);
                     results.add(trailerModel);
                     String selection = MovieContract.TrailerC.Column_Movieid + "=?";
                     String[] selectionArgs = new String[]{String.valueOf(keymovieId)};
