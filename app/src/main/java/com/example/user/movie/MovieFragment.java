@@ -43,6 +43,7 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
     private MovieAdapter imageArrayAdapter;
 
     private static final int Movie_Loader=0;
+    private static final int Favourite_Loader=1;
     private static final String[] MOVIE_COLUMNS={
             MovieContract.MovieC._ID,MovieContract.MovieC.Column_Movieid,MovieContract.MovieC.COLUMN_TITLE,MovieContract.MovieC.COLUMN_IMAGE,MovieContract.MovieC.COLUMN_bkgIMAGE,MovieContract.MovieC.COLUMN_OVERVIEW,MovieContract.MovieC.COLUMN_RATING,MovieContract.MovieC.COLUMN_DATE
     };
@@ -110,43 +111,213 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 0) {
+
+
+         /*   SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            mSort = sharedPrefs.getString(
+                    getString(R.string.orderkey),
+                    getString(R.string.defaultval));
+                    get
+            if(mSort.equals(getString(R.string.pref_units_fav)))
+            {
+                getLoaderManager().initLoader(Favourite_Loader,null,this);
+            }
+            else {
+                getLoaderManager().initLoader(Movie_Loader, null, this);
+
+            }
 
 
 
             Log.i("MainActivityFragment", "onActivityResult()");
+            */
+
         }
-    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
     {
-        getLoaderManager().initLoader(Movie_Loader,null,this);
+
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mSort = sharedPrefs.getString(
+                getString(R.string.orderkey),
+                getString(R.string.defaultval));
+        if(mSort.equals(getString(R.string.pref_units_fav)))
+        {
+            getLoaderManager().initLoader(Favourite_Loader,null,this);
+        }
+        else {
+            getLoaderManager().initLoader(Movie_Loader, null, this);
+
+        }
+
         super.onActivityCreated(savedInstanceState);
 
     }
-    public android.support.v4.content.Loader<Cursor> onCreateLoader(int i, Bundle bundle)
-    {
-        Uri MovieUri=MovieContract.MovieC.Content_Uri;
-        Log.d("LOadercheck","create working");
+    public android.support.v4.content.Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        switch (i) {
+            case 0: {
+                Uri MovieUri = MovieContract.MovieC.Content_Uri;
+                Log.d("LOadercheck", "create working");
 
-        return new android.support.v4.content.CursorLoader(getActivity(),MovieUri,MOVIE_COLUMNS,null,null,null);
+                return new android.support.v4.content.CursorLoader(getActivity(), MovieUri, MOVIE_COLUMNS, null, null, null);
 
+            }
+            case 1: {
+                Uri FavouriteUri = MovieContract.FavoriteC.Content_Uri;
+                return new android.support.v4.content.CursorLoader(getActivity(), FavouriteUri, MOVIE_COLUMNS, null, null, null);
+
+            }
+            default:
+                return null;
+        }
     }
 
     @Override
     public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor cursor) {
-        Log.d("LOaderfinishcheck","finish working");
-        Log.d("cursorlength","lenght is"+cursor.getCount());
+        int loaderId = loader.getId();
+        switch (loaderId) {
+            case Movie_Loader: {
+                Log.d("LOaderfinishcheck", "finish working");
+                Log.d("cursorlength", "lenght is" + cursor.getCount());
 
-        imageArrayAdapter.swapCursor(cursor);
-        Log.d("adaptersize","adaptersixe"+imageArrayAdapter.getCount());
-        if(mPosition!=GridView.INVALID_POSITION)
-        {
-            gridview.smoothScrollToPosition(mPosition);
+
+                imageArrayAdapter.swapCursor(cursor);
+                gridview.setAdapter(imageArrayAdapter);
+
+                gridview.setVisibility(View.VISIBLE);
+                gridview.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                {
+
+
+
+                    public void onItemClick(AdapterView<?> adapterview,View view,int i,long l)
+                    {
+                        Cursor cursor=(Cursor)adapterview.getItemAtPosition(i);
+                        if(cursor!=null) {
+                    /*Bundle bundle=new Bundle();
+
+                    bundle.putInt("MovieId",cursor.getInt(Col_MovieId));
+
+
+                    bundle.putString("title", cursor.getString(Col_MovieTitle));
+
+                    bundle.putString("release", cursor.getString(Col_MovieDate));
+                    bundle.putString("thumb", cursor.getString(Col_Moviebkg));
+                    bundle.putString("rating", String.valueOf(cursor.getInt(Col_MovieRating)));
+                    bundle.putString("plot", cursor.getString(Col_MovieOverview));
+                    ((Callback) getActivity()).onItemSelected(bundle);
+
+                    */
+                            Log.d("cursorvaluemain","val"+cursor.getInt(Col_ID));
+                            int movieId=cursor.getInt(Col_MovieId);
+                            Log.d("Tsgmoviesel","selected"+movieId);
+
+                            // TrailerClass Tc=new TrailerClass();
+                            // Tc.execute(Integer.toString(movieId));
+
+                            // mTrailer = trailerList.get(0);
+                            // key= mTrailer.getKey();
+
+
+                            //  Log.d("keytrailer",keyofTrailer);
+
+                            //Log.d("selected","mov is"+movieId);
+                            Uri ur=MovieContract.MovieC.BuildUriFromId(cursor.getInt(Col_ID));
+                            ((Callback)getActivity()).onItemSelected(ur,movieId);
+
+                   /* Intent intent = new Intent(getActivity(), DetailActivity.class).putExtras(bundle);
+                    startActivity(intent);
+                    */
+                        }
+                        mPosition=i;
+
+
+                    }
+
+
+
+                });
+                Log.d("adaptersize", "adaptersixe" + imageArrayAdapter.getCount());
+                if (mPosition != GridView.INVALID_POSITION) {
+                    gridview.smoothScrollToPosition(mPosition);
+                }
+                break;
+
+
+                //imageArrayAdapter.changeCursor(cursor);
+            }
+            case Favourite_Loader: {
+                Log.d("loaderchk","in fav");
+
+                if (cursor.getCount() > 0) {
+
+                    imageArrayAdapter.swapCursor(cursor);
+                    gridview.setAdapter(imageArrayAdapter);
+                    gridview.setVisibility(View.VISIBLE);
+
+                    gridview.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                    {
+
+
+
+                        public void onItemClick(AdapterView<?> adapterview,View view,int i,long l)
+                        {
+                            Cursor cursor=(Cursor)adapterview.getItemAtPosition(i);
+                            if(cursor!=null) {
+                    /*Bundle bundle=new Bundle();
+
+                    bundle.putInt("MovieId",cursor.getInt(Col_MovieId));
+
+
+                    bundle.putString("title", cursor.getString(Col_MovieTitle));
+
+                    bundle.putString("release", cursor.getString(Col_MovieDate));
+                    bundle.putString("thumb", cursor.getString(Col_Moviebkg));
+                    bundle.putString("rating", String.valueOf(cursor.getInt(Col_MovieRating)));
+                    bundle.putString("plot", cursor.getString(Col_MovieOverview));
+                    ((Callback) getActivity()).onItemSelected(bundle);
+
+                    */
+                                Log.d("cursorvaluemain","val"+cursor.getInt(Col_ID));
+                                int movieId=cursor.getInt(Col_MovieId);
+                                Log.d("Tsgmoviesel","selected"+movieId);
+
+                                // TrailerClass Tc=new TrailerClass();
+                                // Tc.execute(Integer.toString(movieId));
+
+                                // mTrailer = trailerList.get(0);
+                                // key= mTrailer.getKey();
+
+
+                                //  Log.d("keytrailer",keyofTrailer);
+
+                                //Log.d("selected","mov is"+movieId);
+                                Uri ur=MovieContract.FavoriteC.BuildUriFromId(cursor.getInt(Col_ID));
+                                ((Callback)getActivity()).onItemSelected(ur,movieId);
+
+                   /* Intent intent = new Intent(getActivity(), DetailActivity.class).putExtras(bundle);
+                    startActivity(intent);
+                    */
+                            }
+                            mPosition=i;
+
+
+                        }
+
+
+
+                    });
+                    Log.d("adaptersize", "adaptersixe" + imageArrayAdapter.getCount());
+                    if (mPosition != GridView.INVALID_POSITION) {
+                        gridview.smoothScrollToPosition(mPosition);
+                    }
+
+                }
+                break;
+
+            }
         }
-
-
-        //imageArrayAdapter.changeCursor(cursor);
     }
 
     @Override
@@ -163,18 +334,23 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
         String sortOrder = sharedPrefs.getString(
                 getString(R.string.orderkey),
                 getString(R.string.defaultval));
-        if(!mSort.equals(sortOrder)) {
-          //  getLoaderManager().getLoader(Movie_Loader).
-                    getContext().getContentResolver().delete(MovieContract.MovieC.Content_Uri,null,null);
+        if (!mSort.equals(sortOrder)) {
+            getLoaderManager().restartLoader(Movie_Loader, null, this);
+            //  getLoaderManager().getLoader(Movie_Loader).
+            getContext().getContentResolver().delete(MovieContract.MovieC.Content_Uri, null, null);
 
-            getLoaderManager().restartLoader(Movie_Loader,null,this);
-            mSort=sortOrder;
 
-            displayMovie();
+            mSort = sortOrder;
+            if (!mSort.equals(getString(R.string.pref_units_fav))) {
+
+
+                displayMovie();
+
+            }
+
+
 
         }
-
-
     }
 
 
@@ -190,61 +366,7 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
         //imageArrayAdapter = new MovieAdapter(getActivity(), movies);
         imageArrayAdapter=new MovieAdapter(getActivity(),null,0);
         gridview = (GridView) rootView.findViewById(R.id.grd_view);
-        gridview.setAdapter(imageArrayAdapter);
 
-        gridview.setVisibility(View.VISIBLE);
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-
-
-
-            public void onItemClick(AdapterView<?> adapterview,View view,int i,long l)
-            {
-               Cursor cursor=(Cursor)adapterview.getItemAtPosition(i);
-                if(cursor!=null) {
-                    /*Bundle bundle=new Bundle();
-
-                    bundle.putInt("MovieId",cursor.getInt(Col_MovieId));
-
-
-                    bundle.putString("title", cursor.getString(Col_MovieTitle));
-
-                    bundle.putString("release", cursor.getString(Col_MovieDate));
-                    bundle.putString("thumb", cursor.getString(Col_Moviebkg));
-                    bundle.putString("rating", String.valueOf(cursor.getInt(Col_MovieRating)));
-                    bundle.putString("plot", cursor.getString(Col_MovieOverview));
-                    ((Callback) getActivity()).onItemSelected(bundle);
-
-                    */
-                    Log.d("cursorvaluemain","val"+cursor.getInt(Col_ID));
-                    int movieId=cursor.getInt(Col_MovieId);
-                    Log.d("Tsgmoviesel","selected"+movieId);
-
-                   // TrailerClass Tc=new TrailerClass();
-                    // Tc.execute(Integer.toString(movieId));
-
-                   // mTrailer = trailerList.get(0);
-                   // key= mTrailer.getKey();
-
-
-                  //  Log.d("keytrailer",keyofTrailer);
-
-                    //Log.d("selected","mov is"+movieId);
-                    Uri ur=MovieContract.MovieC.BuildUriFromId(cursor.getInt(Col_ID));
-                    ((Callback)getActivity()).onItemSelected(ur,movieId);
-
-                   /* Intent intent = new Intent(getActivity(), DetailActivity.class).putExtras(bundle);
-                    startActivity(intent);
-                    */
-                }
-                mPosition=i;
-
-
-            }
-
-
-
-        });
         if(savedInstanceState!=null&&savedInstanceState.containsKey(SELECTED_KEY))
         {
             mPosition=savedInstanceState.getInt(SELECTED_KEY);
@@ -276,9 +398,11 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
                 getString(R.string.orderkey),
                 getString(R.string.defaultval));
         String QUERY_PARAM;
+        if (!sortOrder.equals(getString(R.string.pref_units_fav))) {
 
-        FetchMovie ft = new FetchMovie();
-        ft.execute(sortOrder);
+            FetchMovie ft = new FetchMovie();
+            ft.execute(sortOrder);
+        }
     }
 
     class FetchMovie extends AsyncTask<String, Void, Void> {

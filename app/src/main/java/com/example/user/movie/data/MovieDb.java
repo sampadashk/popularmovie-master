@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 
 public class MovieDb extends SQLiteOpenHelper {
-    public static final int Database_version=2;
+    public static final int Database_version=5;
     public static final String Database_name="movie.db";
    public MovieDb(Context context) {
         super(context,Database_name,null,Database_version);
@@ -33,17 +33,41 @@ public class MovieDb extends SQLiteOpenHelper {
                 MovieContract.TrailerC.Column_MovieKey + " TEXT NOT NULL, " +
                 "UNIQUE (" + MovieContract.TrailerC.Column_MovieKey + ") ON CONFLICT REPLACE);";
 
+        final String SQL_CREATE_REVIEW_TABLE="CREATE TABLE " + MovieContract.ReviewC.tableName+" (" +
+                MovieContract.ReviewC._ID+ " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MovieContract.ReviewC.Column_Movieid+ " INTEGER NOT NULL, " +
+                MovieContract.ReviewC.Column_author+ " TEXT NOT NULL, " +
+                MovieContract.ReviewC.Column_content+ " TEXT NOT NULL, " +
+                MovieContract.ReviewC.Column_reviewid+ " TEXT NOT NULL, " +
+                "UNIQUE (" + MovieContract.ReviewC.Column_reviewid + ") ON CONFLICT REPLACE);";
+        final String SQL_CREATE_FAV_TABLE = "CREATE TABLE " + MovieContract.FavoriteC.tableName + " (" +
+                MovieContract.FavoriteC._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MovieContract.FavoriteC.Column_Movieid + " INTEGER NOT NULL, " +
+                MovieContract.FavoriteC.COLUMN_IMAGE + " TEXT, " +
+                MovieContract.FavoriteC.COLUMN_TITLE + " TEXT NOT NULL, " +
+                MovieContract.FavoriteC.COLUMN_bkgIMAGE + " TEXT, " +
+                MovieContract.FavoriteC.COLUMN_OVERVIEW + " TEXT, " +
+                MovieContract.FavoriteC.COLUMN_RATING + " INTEGER, " +
+                MovieContract.FavoriteC.COLUMN_DATE + " TEXT, "+
+                "UNIQUE (" + MovieContract.FavoriteC.Column_Movieid + ") ON CONFLICT REPLACE);";
+
                 //MovieContract.TrailerC.Column_MovieKey + " TEXT UNIQUE NOT NULL);";
+
 
 
         db.execSQL(SQL_CREATE_MOVIE_TABLE);
         db.execSQL(SQL_CREATE_TRAILER_TABLE);
+        db.execSQL(SQL_CREATE_REVIEW_TABLE);
+        db.execSQL(SQL_CREATE_FAV_TABLE);
         
     }
     public void onUpgrade(SQLiteDatabase db,int oldVersion,int newVersion)
     {
         db.execSQL("DROP TABLE IF EXISTS "+MovieContract.MovieC.tableName);
         db.execSQL("DROP TABLE IF EXISTS "+MovieContract.TrailerC.tableName);
+        db.execSQL("DROP TABLE IF EXISTS "+MovieContract.ReviewC.tableName);
+        db.execSQL("DROP TABLE IF EXISTS "+MovieContract.FavoriteC.tableName);
+
         onCreate(db);
     }
 

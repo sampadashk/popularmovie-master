@@ -7,9 +7,11 @@
     <string name="orderkey">order</string>
     <string name="defaultval">popularity</string>
     <string name="pref_units_label_pop">popular</string>
+    <string name="pref_units_label_fav">favourite</string>
     <string name="pref_units_label_rating">rating</string>
     <string name="pref_units_pop">popularity</string>
     <string name="pref_units_rating">vote_average</string>
+    <string name="pref_units_fav">favoritemov</string>
     <string name="tmdb_api_key">7a067b1d052056d4c0f744bfc703e5c1</string>
 
 </resources>
