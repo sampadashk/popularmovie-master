@@ -195,40 +195,18 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
                     {
                         Cursor cursor=(Cursor)adapterview.getItemAtPosition(i);
                         if(cursor!=null) {
-                    /*Bundle bundle=new Bundle();
-
-                    bundle.putInt("MovieId",cursor.getInt(Col_MovieId));
 
 
-                    bundle.putString("title", cursor.getString(Col_MovieTitle));
 
-                    bundle.putString("release", cursor.getString(Col_MovieDate));
-                    bundle.putString("thumb", cursor.getString(Col_Moviebkg));
-                    bundle.putString("rating", String.valueOf(cursor.getInt(Col_MovieRating)));
-                    bundle.putString("plot", cursor.getString(Col_MovieOverview));
-                    ((Callback) getActivity()).onItemSelected(bundle);
-
-                    */
                             Log.d("cursorvaluemain","val"+cursor.getInt(Col_ID));
                             int movieId=cursor.getInt(Col_MovieId);
                             Log.d("Tsgmoviesel","selected"+movieId);
 
-                            // TrailerClass Tc=new TrailerClass();
-                            // Tc.execute(Integer.toString(movieId));
 
-                            // mTrailer = trailerList.get(0);
-                            // key= mTrailer.getKey();
-
-
-                            //  Log.d("keytrailer",keyofTrailer);
-
-                            //Log.d("selected","mov is"+movieId);
                             Uri ur=MovieContract.MovieC.BuildUriFromId(cursor.getInt(Col_ID));
                             ((Callback)getActivity()).onItemSelected(ur,movieId);
 
-                   /* Intent intent = new Intent(getActivity(), DetailActivity.class).putExtras(bundle);
-                    startActivity(intent);
-                    */
+
                         }
                         mPosition=i;
 
@@ -245,12 +223,10 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
                 break;
 
 
-                //imageArrayAdapter.changeCursor(cursor);
             }
             case Favourite_Loader: {
                 Log.d("loaderchk","in fav");
 
-                if (cursor.getCount() > 0) {
 
                     imageArrayAdapter.swapCursor(cursor);
                     gridview.setAdapter(imageArrayAdapter);
@@ -265,40 +241,18 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
                         {
                             Cursor cursor=(Cursor)adapterview.getItemAtPosition(i);
                             if(cursor!=null) {
-                    /*Bundle bundle=new Bundle();
-
-                    bundle.putInt("MovieId",cursor.getInt(Col_MovieId));
 
 
-                    bundle.putString("title", cursor.getString(Col_MovieTitle));
-
-                    bundle.putString("release", cursor.getString(Col_MovieDate));
-                    bundle.putString("thumb", cursor.getString(Col_Moviebkg));
-                    bundle.putString("rating", String.valueOf(cursor.getInt(Col_MovieRating)));
-                    bundle.putString("plot", cursor.getString(Col_MovieOverview));
-                    ((Callback) getActivity()).onItemSelected(bundle);
-
-                    */
-                                Log.d("cursorvaluemain","val"+cursor.getInt(Col_ID));
                                 int movieId=cursor.getInt(Col_MovieId);
-                                Log.d("Tsgmoviesel","selected"+movieId);
+                                Log.d("favmoviesel","selected"+movieId);
 
-                                // TrailerClass Tc=new TrailerClass();
-                                // Tc.execute(Integer.toString(movieId));
-
-                                // mTrailer = trailerList.get(0);
-                                // key= mTrailer.getKey();
-
-
-                                //  Log.d("keytrailer",keyofTrailer);
-
-                                //Log.d("selected","mov is"+movieId);
                                 Uri ur=MovieContract.FavoriteC.BuildUriFromId(cursor.getInt(Col_ID));
+                                Log.d("favurl","urlcheck"+ur);
+                                String path=ur.getPathSegments().get(0);
+                                Log.d("pathchk",path);
                                 ((Callback)getActivity()).onItemSelected(ur,movieId);
 
-                   /* Intent intent = new Intent(getActivity(), DetailActivity.class).putExtras(bundle);
-                    startActivity(intent);
-                    */
+
                             }
                             mPosition=i;
 
@@ -313,7 +267,7 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
                         gridview.smoothScrollToPosition(mPosition);
                     }
 
-                }
+
                 break;
 
             }
@@ -334,23 +288,33 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
         String sortOrder = sharedPrefs.getString(
                 getString(R.string.orderkey),
                 getString(R.string.defaultval));
-        if (!mSort.equals(sortOrder)) {
+        if (!mSort.equals(sortOrder)&&(!sortOrder.equals(getString(R.string.pref_units_fav)))) {
             getLoaderManager().restartLoader(Movie_Loader, null, this);
             //  getLoaderManager().getLoader(Movie_Loader).
             getContext().getContentResolver().delete(MovieContract.MovieC.Content_Uri, null, null);
 
 
             mSort = sortOrder;
-            if (!mSort.equals(getString(R.string.pref_units_fav))) {
+            displayMovie();
+          /*  if (!mSort.equals(getString(R.string.pref_units_fav))) {
 
 
                 displayMovie();
 
             }
+            */
 
 
 
         }
+        else if(sortOrder.equals(getString(R.string.pref_units_fav)))
+        {
+            getLoaderManager().restartLoader(Favourite_Loader,null,this);
+            mSort=sortOrder;
+        }
+
+
+
     }
 
 

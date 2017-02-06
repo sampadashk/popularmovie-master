@@ -85,7 +85,7 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
     private static final String[] Trailer_COLUMNS = {
             MovieContract.TrailerC._ID, MovieContract.TrailerC.Column_Movieid, MovieContract.TrailerC.Column_MovieKey
     };
-    private static final String[] Favourite_Columns={MovieContract.FavoriteC._ID,MovieContract.FavoriteC.Column_Movieid,MovieContract.FavoriteC.COLUMN_IMAGE,MovieContract.FavoriteC.COLUMN_TITLE,MovieContract.FavoriteC.COLUMN_bkgIMAGE,MovieContract.FavoriteC.COLUMN_OVERVIEW,MovieContract.FavoriteC.COLUMN_RATING,MovieContract.FavoriteC.COLUMN_DATE};
+    private static final String[] Favourite_Columns={MovieContract.FavoriteC._ID, MovieContract.FavoriteC.Column_Movieid, MovieContract.FavoriteC.COLUMN_TITLE, MovieContract.FavoriteC.COLUMN_IMAGE, MovieContract.FavoriteC.COLUMN_bkgIMAGE, MovieContract.FavoriteC.COLUMN_OVERVIEW, MovieContract.FavoriteC.COLUMN_RATING, MovieContract.FavoriteC.COLUMN_DATE};
     private static final String[] Review_COLUMNS = {MovieContract.ReviewC._ID, MovieContract.ReviewC.Column_Movieid, MovieContract.ReviewC.Column_author, MovieContract.ReviewC.Column_content, MovieContract.ReviewC.Column_reviewid};
 
     //public String mSort;
@@ -226,13 +226,27 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
         switch (id) {
             case 0:
                 if (mUri != null) {
+                    String[] selectionArgs;
+                    String selection;
+                    String path=mUri.getPathSegments().get(0);
+                    if(path.equals(MovieContract.FavoriteC.tableName))
+                    {
+                        selection = MovieContract.FavoriteC.Column_Movieid + "=?";
+                        selectionArgs=new String[]{String.valueOf(keymovieId)};
+                        return new CursorLoader(getActivity(), MovieContract.FavoriteC.Content_Uri, Favourite_Columns, selection, selectionArgs, null);
+                       // selectionArgs = new String[]{String.valueOf(ContentUris.parseId(mUri))};
+
+                    }
+                    else {
 
 
-                  String[] selectionArgs;
-                    String selection = MovieContract.MovieC._ID + "=?";
-                    selectionArgs = new String[]{String.valueOf(ContentUris.parseId(mUri))};
-                    Log.d("checkLoadervalue", "val is" + selectionArgs);
-                    return new CursorLoader(getActivity(), MovieContract.MovieC.Content_Uri, Detail_COLUMNS, selection, selectionArgs, null);
+                        selection = MovieContract.MovieC.Column_Movieid + "=?";
+                        //selectionArgs = new String[]{String.valueOf(ContentUris.parseId(mUri))};
+                         selectionArgs=new String[]{String.valueOf(keymovieId)};
+                        Log.d("checkLoadervalue", "val is" + selectionArgs);
+                        return new CursorLoader(getActivity(), MovieContract.MovieC.Content_Uri, Detail_COLUMNS, selection, selectionArgs, null);
+                    }
+
 
                 }
 
@@ -278,8 +292,9 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
                         actionBar.setTitle(titlet);
                     }
                      poster=data.getString(Col_MoviePoster);
-                    String bkgurl = data.getString(Col_Moviebkg);
+                    final String bkgurl = data.getString(Col_Moviebkg);
                     String url = "http://image.tmdb.org/t/p/w342" + bkgurl;
+                    Log.d("bkcheck",url);
                     Picasso.with(getContext()).setLoggingEnabled(true);
                     Picasso.with(getContext()).load(url).into(ivw);
                    final int rat=data.getInt(Col_MovieRating);
@@ -319,6 +334,7 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
                                 cv.put(MovieContract.FavoriteC.Column_Movieid,keymovieId);
                                 cv.put(MovieContract.FavoriteC.COLUMN_IMAGE,poster);
                                 cv.put(MovieContract.FavoriteC.COLUMN_TITLE,title);
+                                cv.put(MovieContract.FavoriteC.COLUMN_bkgIMAGE,bkgurl);
                                 cv.put(MovieContract.FavoriteC.COLUMN_RATING,rat);
                                 cv.put(MovieContract.FavoriteC.COLUMN_OVERVIEW,overview);
                                 cv.put(MovieContract.FavoriteC.COLUMN_DATE,date);

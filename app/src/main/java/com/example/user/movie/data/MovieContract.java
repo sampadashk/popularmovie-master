@@ -77,7 +77,7 @@ public class MovieContract {
         public static Uri Content_Uri = Base_Uri.buildUpon().appendPath(path_fav).build();
         public static final String Content_Type = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + Content_Authority + "/" + path_fav;
         public static final String Content_Item_Type = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + Content_Authority + "/" + path_fav;
-        public static final String tableName ="fav";
+        public static final String tableName = "fav";
         public static final String Column_Movieid = "MovieID";
 
         public static final String COLUMN_TITLE = "title";

@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 
 public class MovieDb extends SQLiteOpenHelper {
-    public static final int Database_version=5;
+    public static final int Database_version=6;
     public static final String Database_name="movie.db";
    public MovieDb(Context context) {
         super(context,Database_name,null,Database_version);

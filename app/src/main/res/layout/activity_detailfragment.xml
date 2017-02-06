@@ -86,8 +86,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/ic_favorite_border_black_36dp"
-                />
+                android:src="@drawable/ic_favorite_border_black_36dp"/>
+
     <TextView
         android:id="@+id/datetext"
         android:layout_width="wrap_content"
