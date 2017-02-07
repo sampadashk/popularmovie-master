@@ -84,9 +84,9 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mSort = sharedPrefs.getString(
-                getString(R.string.orderkey),
-                getString(R.string.defaultval));
+      //  mSort = sharedPrefs.getString(
+           //     getString(R.string.orderkey),
+             //   getString(R.string.defaultval));
 
        // displayMovie();
 
@@ -113,24 +113,7 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
         super.onActivityResult(requestCode, resultCode, data);
 
 
-         /*   SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            mSort = sharedPrefs.getString(
-                    getString(R.string.orderkey),
-                    getString(R.string.defaultval));
-                    get
-            if(mSort.equals(getString(R.string.pref_units_fav)))
-            {
-                getLoaderManager().initLoader(Favourite_Loader,null,this);
-            }
-            else {
-                getLoaderManager().initLoader(Movie_Loader, null, this);
 
-            }
-
-
-
-            Log.i("MainActivityFragment", "onActivityResult()");
-            */
 
         }
 
@@ -138,8 +121,8 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
     public void onActivityCreated(Bundle savedInstanceState)
     {
 
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mSort = sharedPrefs.getString(
+       SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+         mSort = sharedPrefs.getString(
                 getString(R.string.orderkey),
                 getString(R.string.defaultval));
         if(mSort.equals(getString(R.string.pref_units_fav)))
@@ -530,117 +513,6 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
         }
     }
 
-/*
-    public class TrailerClass extends AsyncTask<String, Void, List<Trailer>>
-    {
-        @Override
-        protected List<Trailer> doInBackground(String... params) {
-
-            if(params.length==0)
-            {
-                return null;
-            }
-            HttpURLConnection httpURLConnection=null;
-            BufferedReader br=null;
-            String movieJsonStr=null;
-
-
-            try {
-                final String API_KEY_PARAM = "api_key";
-                final String Base_url = "http://api.themoviedb.org/3/movie/" + params[0] + "/videos";
-                Uri uri = Uri.parse(Base_url).buildUpon().appendQueryParameter(API_KEY_PARAM, getString(R.string.tmdb_api_key)).build();
-                URL url = new URL(uri.toString());
-                httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.setRequestMethod("GET");
-                httpURLConnection.connect();
-                InputStream inputStream = httpURLConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    movieJsonStr = null;
-                }
-                br = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                while ((line = br.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-                if (buffer.length() == 0) {
-                    movieJsonStr = null;
-                }
-                movieJsonStr = buffer.toString();
-                Log.d("tag_check", "movie json" + movieJsonStr);
-
-
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-            finally {
-                if(httpURLConnection!=null)
-                    httpURLConnection.disconnect();
-            }
-            if(br!=null)
-            {
-                try {
-                    br.close();
-                } catch (final IOException e) {
-                    Log.e("PlaceholderFragment", "Error closing stream", e);
-                }
-            }
-            try {
-                getmovieTrailerFromJson(movieJsonStr);
-            } catch (JSONException e) {
-                Log.e("log_t", e.getMessage(), e);
-                e.printStackTrace();
-            }
-            return null;
-
-
-        }
-        List<Trailer> getmovieTrailerFromJson(String jsonStr) throws JSONException {
-            JSONObject trailerJson =new JSONObject(jsonStr);
-            JSONArray trailerArray = trailerJson.getJSONArray("results");
-
-            List<Trailer> results = new ArrayList<>();
-
-            for(int i = 0; i < trailerArray.length(); i++) {
-                JSONObject trailer = trailerArray.getJSONObject(i);
-                // Only show Trailers which are on Youtube
-                if (trailer.getString("site").contentEquals("YouTube")) {
-                    Trailer trailerModel = new Trailer(trailer);
-                    results.add(trailerModel);
-                    Log.d("CheckJson",trailerModel.getName());
-                }
-            }
-            mTrailer = results.get(0);
-            keyofTrailer= mTrailer.getKey();
-            Log.d("Tag_keyv",keyofTrailer);
-
-            return results;
-        }
-        @Override
-        protected void onPostExecute(List<Trailer> trailers) {
-            Log.d("inFunc","onpOST");
-            if (trailers != null) {
-                if (trailers.size() > 0) {
-
-                    //  for (Trailer trailer : trailers) {
-                    //   mTrailerAdapter.add(trailer);
-                    // }
-                }
-
-                mTrailer = trailers.get(0);
-                keyofTrailer= mTrailer.getKey();
-                Log.d("keyvalue",keyofTrailer);
-
-
-            }
-
-        }
-    }
-    */
 
 }
 

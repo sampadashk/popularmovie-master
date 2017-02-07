@@ -34,6 +34,7 @@
                 android:layout_alignParentBottom="true"
                 android:padding="5dp"
                 android:textSize="22sp"
+                android:background="@color/translucent_black"
                 android:textColor="@android:color/white"
 
 

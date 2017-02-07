@@ -210,14 +210,7 @@ public class DetailClassFragment extends Fragment implements LoaderManager.Loade
 
     }
 
-    private Intent createShareMovieIntent() {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, mTrailer.getName() + " " +
-                "http://www.youtube.com/watch?v=" + mTrailer.getKey());
-        return shareIntent;
-    }
+
 
 
     @Override
