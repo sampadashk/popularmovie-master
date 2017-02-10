@@ -1,2 +1,2 @@
 # popularmovie
-Put your api key in a variable "appKey" in MovieFragment class on line 453
+Put your api key in variable "tmdb_api_key" in strings.xml file(app/src/main/res/values/strings.xml)
