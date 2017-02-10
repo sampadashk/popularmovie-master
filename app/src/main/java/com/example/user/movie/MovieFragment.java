@@ -450,8 +450,8 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
 
                 QUERY_PARAM = "popular";
 
-            String appKey = " ";
-            // TODO: Put Your apikey here in variable appKey
+          
+           
             try {
 
 
@@ -459,7 +459,7 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
 
                 String add = "http://api.themoviedb.org/3/movie/" + QUERY_PARAM + "?";
 
-                Uri ur = Uri.parse(add).buildUpon().appendQueryParameter(APPID_PARAM, appKey).build();
+                Uri ur = Uri.parse(add).buildUpon().appendQueryParameter(APPID_PARAM, getString(R.string.tmdb_api_key)).build();
                 URL url = new URL(ur.toString());
                 Log.d("check_u", ur.toString());
                 con = (HttpURLConnection) url.openConnection();
