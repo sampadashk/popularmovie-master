@@ -450,7 +450,7 @@ public class MovieFragment extends android.support.v4.app.Fragment implements an
 
                 QUERY_PARAM = "popular";
 
-            String appKey = "7a067b1d052056d4c0f744bfc703e5c1";
+            String appKey = " ";
             // TODO: Put Your apikey here in variable appKey
             try {
 
